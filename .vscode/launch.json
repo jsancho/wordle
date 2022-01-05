@@ -13,7 +13,7 @@
             ],
             "program": "${workspaceFolder}\\dist\\app.js",
             "args": ["parse-dicts"],
-            "preLaunchTask": "tsc: build - tsconfig.json",
+            "preLaunchTask": "npm: build",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
             ]
