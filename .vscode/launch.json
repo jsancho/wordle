@@ -12,7 +12,8 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\dist\\app.js",
-            "args": ["parse-dicts"],
+            "args": ["suggest"],
+            // "args": ["parse-dicts"],
             "preLaunchTask": "npm: build",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"

@@ -26,7 +26,8 @@ export const parseDictionaries = async () => {
       `${wordleDictionary.length} with length of ${WORD_LENGTH} have been filtered`
     );
 
-    const writeBuffer = Buffer.from(wordleDictionary.join(EOL));
+    const csv = wordleDictionary.join(',');
+    const writeBuffer = Buffer.from(csv);
     await fs.writeFile(
       `${__dirname}/../dicts/${WORDLE_DICTIONARY}`,
       writeBuffer
