@@ -1,3 +1,3 @@
 export const findMatch = () => {
-  console.log('finding matches...')
-}
+  console.log('finding matches...');
+};
