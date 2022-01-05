@@ -16,9 +16,9 @@ export const parseDictionaries = async () => {
 
     // TODO: apply multiline regex before splitting the file
     const words = data.split(/\r?\n/)
-    const expression = /^[a-z]{5}$/
+    const wordValidator = new RegExp(`^[a-z]{${WORD_LENGTH}}$`)
     const wordleDictionary = words
-      .filter((word) => expression.test(word))
+      .filter((word) => wordValidator.test(word))
       .map((word) => word.toLowerCase())
 
     console.log(`${words.length} words have been found`)
