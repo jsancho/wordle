@@ -14,18 +14,15 @@ export const findMatch = async (hint: string, options: IOptions) => {
     printBadHintError();
   }
 
-  // TODO: move to printStart func
-  console.log(`finding matches for ${hint}`);
-  console.log(`including ${JSON.stringify(options.include)}`);
-  console.log(`excluding ${JSON.stringify(options.exclude)}`);
-  const matches = await matchWords(hint, options.include, options.exclude);
+  printStart(hint, options);
+
+  const dictionary = await loadDictionary(options);
+  const matches = await matchWords(hint, dictionary);
 
   printResult(matches);
 };
 
-const matchWords = async (hint: string, include: string, exclude: string) => {
-  const dictionary = await loadDictionary(include, exclude);
-
+const matchWords = async (hint: string, dictionary: string) => {
   const hintMatcher = hint.replace(/\*/g, '[a-z]');
   const wordMatcherExpression = `(${hintMatcher}),`;
   const wordMatcher = new RegExp(wordMatcherExpression, 'g');
@@ -41,12 +38,21 @@ const printBadHintError = () => {
   );
 };
 
+const printStart = (hint: string, options: IOptions) => {
+  console.log(`finding matches for ${hint}`);
+  if (options?.include.length)
+    console.log(`including ${JSON.stringify(options.include)}`);
+
+  if (options?.exclude.length)
+    console.log(`excluding ${JSON.stringify(options.exclude)}`);
+};
+
 const printResult = (result: string[]) => {
   console.log(`${result.length} match(es) found`);
   result.forEach((suggestion) => console.log(suggestion));
 };
 
-const loadDictionary = async (include: string, exclude: string) => {
+const loadDictionary = async (options: IOptions) => {
   let dictionary = await fs.readFile(
     `${__dirname}/../dicts/${WORDLE_DICTIONARY}`,
     {
@@ -54,8 +60,8 @@ const loadDictionary = async (include: string, exclude: string) => {
     }
   );
 
-  dictionary = filterIncludedLetters(dictionary, include);
-  dictionary = filterExcludedLetters(dictionary, exclude);
+  dictionary = filterIncludedLetters(dictionary, options.include);
+  dictionary = filterExcludedLetters(dictionary, options.exclude);
 
   return dictionary;
 };
@@ -65,7 +71,7 @@ const filterIncludedLetters = (dictionary: string, include: string) => {
   let wordTokens = dictionary.split(',');
 
   const chars = include.split('');
-  //TODO: remove duplicate letters
+  // TODO: remove duplicate letters
   chars.forEach((char) => {
     wordTokens = wordTokens.filter((w) => w.includes(char));
   });
@@ -78,7 +84,7 @@ const filterExcludedLetters = (dictionary: string, exclude: string) => {
   let wordTokens = dictionary.split(',');
 
   const chars = exclude.split('');
-  //TODO: remove duplicate letters
+  // TODO: remove duplicate letters
   chars.forEach((char) => {
     wordTokens = wordTokens.filter((w) => !w.includes(char));
   });
