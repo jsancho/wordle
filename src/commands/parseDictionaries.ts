@@ -1,6 +1,5 @@
 import { promises as fs } from 'fs';
 import { Buffer } from 'buffer';
-import { EOL } from 'os';
 
 const DEFAULT_DICTIONARY = 'SCRABBLE-munged-large.txt';
 const WORDLE_DICTIONARY = 'wordle.txt';
@@ -25,6 +24,8 @@ export const parseDictionaries = async () => {
     console.log(
       `${wordleDictionary.length} with length of ${WORD_LENGTH} have been filtered`
     );
+
+    // TODO: remove duplicate words
 
     const csv = wordleDictionary.join(',');
     const writeBuffer = Buffer.from(csv);

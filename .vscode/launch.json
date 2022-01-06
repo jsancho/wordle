@@ -12,7 +12,7 @@
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\dist\\app.js",
-            "args": ["suggest"],
+            //"args": ["suggest", "****l", "-i", "a", "-e", "irtefouc"],
             // "args": ["parse-dicts"],
             "preLaunchTask": "npm: build",
             "outFiles": [
