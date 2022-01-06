@@ -40,10 +40,10 @@ const printBadHintError = () => {
 
 const printStart = (hint: string, options: IOptions) => {
   console.log(`finding matches for ${hint}`);
-  if (options?.include.length)
+  if (options.include?.length)
     console.log(`including ${JSON.stringify(options.include)}`);
 
-  if (options?.exclude.length)
+  if (options.exclude?.length)
     console.log(`excluding ${JSON.stringify(options.exclude)}`);
 };
 
