@@ -16,7 +16,9 @@ program
     '-e, --exclude <exclude>',
     'The letters to exclude, e.g. greyed out letters from a previous attempt'
   )
-  .description('Suggest possible matching words')
+  .description(
+    'Suggest words that will match the letters in each position for the hint provided'
+  )
   .action(findMatch);
 
 program

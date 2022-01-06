@@ -34,7 +34,7 @@ const matchWords = async (hint: string, dictionary: string) => {
 const printBadHintError = () => {
   console.error(`the hint must have ${WORD_LENGTH} characters`);
   console.error(
-    'For example, use app*e to match the word with any character in the 4th position'
+    'For example, use "app*e" to match the word with a wildcar in the 4th letter'
   );
 };
 
