@@ -16,90 +16,129 @@ function typeWord(word) {
   // clickKeyboardLetter("↵");
 }
 
-function getYellowLetters() {
-  // const allRows = document.querySelector("game-app").shadowRoot
-  //     .querySelectorAll("game-row");
-
+function parseHtmlTileResults() {
   const usedRows = document.querySelector("game-app").shadowRoot
       .querySelectorAll("game-row[letters]:not([letters=''])");
 
-  let letters = [];
-  // TODO: refactor to use a reduce method?
-  usedRows.forEach(row => {
-      const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='present']");
-      const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-      letters = [...letters, ...letters];
-  });
+  const hint = Array.from('*'.repeat(5))
+  let yellow = {};
+  const exclude = [];
   
-  return [...new Set(letters)];
+  usedRows.forEach(row => {
+    const t = row.shadowRoot.querySelectorAll("game-tile")
+      const tiles = Array.from(t);
+
+      for (let i = 0; i<5; i++){
+        const letter = tiles[i].getAttribute("letter");
+        const evaluation = tiles[i].getAttribute("evaluation");
+        
+        switch (evaluation) {
+          case "correct": hint.splice(i, 1, letter);
+                          break;
+          case "present": yellow[letter] = yellow[letter] && yellow[letter].length ? [...yellow[letter],i] :[i];
+                         break;
+          case "absent": exclude.push(letter);
+                         break;
+        }
+      }
+  });
+
+  // TODO: remove duplicates from exclude
+  // TODO: remove duplicates from yellow positions
+  return { hint: hint.join(''), yellow, exclude};
 }
 
-function getGreyLetters() {
-  const usedRows = document.querySelector("game-app").shadowRoot
-      .querySelectorAll("game-row[letters]:not([letters=''])");
+// function getYellowLetters() {
+//   // const allRows = document.querySelector("game-app").shadowRoot
+//   //     .querySelectorAll("game-row");
 
-  let letters = [];
-  // TODO: refactor to use a reduce method?
-  usedRows.forEach(row => {
-      const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='absent']");
-      const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-      letters = [...letters, ...letters];
-  });
+//   const usedRows = document.querySelector("game-app").shadowRoot
+//       .querySelectorAll("game-row[letters]:not([letters=''])");
+
+//   let result = [];
+//   // TODO: refactor to use a reduce method?
+//   usedRows.forEach(row => {
+//       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='present']");
+//       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
+//       result = [...result, ...letters];
+//   });
   
-  return [...new Set(letters)];
-}
+//   return [...new Set(result)];
+// }
 
-function getGreenLetters() {
-  const usedRows = document.querySelector("game-app").shadowRoot
-      .querySelectorAll("game-row[letters]:not([letters=''])");
+// function getGreyLetters() {
+//   const usedRows = document.querySelector("game-app").shadowRoot
+//       .querySelectorAll("game-row[letters]:not([letters=''])");
 
-  let letters = [];
-  // TODO: refactor to use a reduce method?
-  usedRows.forEach(row => {
-      const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='correct']");
-      const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-      letters = [...letters, ...letters];
-  });
+//   let result = [];
+//   // TODO: refactor to use a reduce method?
+//   usedRows.forEach(row => {
+//       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='absent']");
+//       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
+//       result = [...result, ...letters];
+//   });
   
-  return [...new Set(letters)];
-}
+//   return [...new Set(result)];
+// }
+
+// function getGreenLetters() {
+//   const usedRows = document.querySelector("game-app").shadowRoot
+//       .querySelectorAll("game-row[letters]:not([letters=''])");
+
+//   let result = [];
+//   // TODO: refactor to use a reduce method?
+//   usedRows.forEach(row => {
+//       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='correct']");
+//       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
+//       result = [...result, ...letters];
+//   });
+  
+//   return [...new Set(result)];
+// }
 
 
-const parseResults = async (tab) => {
-  const yellow = chrome.scripting.executeScript({
+const getGameResults = async (tab) => {
+  return chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      function: getYellowLetters,
+      function: parseHtmlTileResults,
   })
-  .then(data => { 
-    return { 
-      name : "yellow", 
-      values : data[0].result 
-    }}
-  );
+  .then(data => data[0].result);
 
-  const grey = chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    function: getGreyLetters,
-  })
-  .then(data => { 
-    return { 
-      name : "grey", 
-      values : data[0].result 
-    }}
-  );
+  // const yellow = chrome.scripting.executeScript({
+  //     target: { tabId: tab.id },
+  //     function: getYellowLetters,
+  // })
+  // .then(data => { 
+  //   return { 
+  //     name : "yellow", 
+  //     values : data[0].result 
+  //   }}
+  // );
 
-  const green = chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    function: getGreenLetters,
-  })
-  .then(data => { 
-    return { 
-      name : "green", 
-      values : data[0].result 
-    }}
-  );
+  // const grey = chrome.scripting.executeScript({
+  //   target: { tabId: tab.id },
+  //   function: getGreyLetters,
+  // })
+  // .then(data => { 
+  //   return { 
+  //     name : "grey", 
+  //     values : data[0].result 
+  //   }}
+  // );
 
-  return await Promise.all([yellow, grey, green]);
+  // const green = chrome.scripting.executeScript({
+  //   target: { tabId: tab.id },
+  //   function: getGreenLetters,
+  // })
+  // .then(data => { 
+  //   return { 
+  //     name : "green", 
+  //     values : data[0].result 
+  //   }}
+  // );
+
+  // return await Promise.all([all, yellow, grey, green]);
+  // return results;
 };
 
 // extension init
@@ -123,8 +162,7 @@ chrome.action.onClicked.addListener(tab => {
     //   target: { tabId: tab.id },
     //   files: ['results.js']
     // });
-    parseResults(tab).then(results => {
-      debugger;
+    getGameResults(tab).then(results => {
       console.log(results);
     })
     .catch(error => {
