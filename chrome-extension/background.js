@@ -23,45 +23,45 @@ function getYellowLetters() {
   const usedRows = document.querySelector("game-app").shadowRoot
       .querySelectorAll("game-row[letters]:not([letters=''])");
 
-  let presentLetters = [];
+  let letters = [];
   // TODO: refactor to use a reduce method?
   usedRows.forEach(row => {
       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='present']");
       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-      presentLetters = [...presentLetters, ...letters];
+      letters = [...letters, ...letters];
   });
   
-  return [...new Set(presentLetters)];
+  return [...new Set(letters)];
 }
 
 function getGreyLetters() {
   const usedRows = document.querySelector("game-app").shadowRoot
       .querySelectorAll("game-row[letters]:not([letters=''])");
 
-  let absentLetters = [];
+  let letters = [];
   // TODO: refactor to use a reduce method?
   usedRows.forEach(row => {
       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='absent']");
       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-      absentLetters = [...absentLetters, ...letters];
+      letters = [...letters, ...letters];
   });
   
-  return [...new Set(absentLetters)];
+  return [...new Set(letters)];
 }
 
 function getGreenLetters() {
   const usedRows = document.querySelector("game-app").shadowRoot
       .querySelectorAll("game-row[letters]:not([letters=''])");
 
-  let absentLetters = [];
+  let letters = [];
   // TODO: refactor to use a reduce method?
   usedRows.forEach(row => {
       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='correct']");
       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-      absentLetters = [...absentLetters, ...letters];
+      letters = [...letters, ...letters];
   });
   
-  return [...new Set(absentLetters)];
+  return [...new Set(letters)];
 }
 
 
@@ -123,9 +123,9 @@ chrome.action.onClicked.addListener(tab => {
     //   target: { tabId: tab.id },
     //   files: ['results.js']
     // });
-    parseResults(tab).then(values => {
+    parseResults(tab).then(results => {
       debugger;
-      console.log(values);
+      console.log(results);
     })
     .catch(error => {
       debugger;
