@@ -66,79 +66,12 @@ function parseHtmlTileResults() {
 //   return [...new Set(result)];
 // }
 
-// function getGreyLetters() {
-//   const usedRows = document.querySelector("game-app").shadowRoot
-//       .querySelectorAll("game-row[letters]:not([letters=''])");
-
-//   let result = [];
-//   // TODO: refactor to use a reduce method?
-//   usedRows.forEach(row => {
-//       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='absent']");
-//       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-//       result = [...result, ...letters];
-//   });
-  
-//   return [...new Set(result)];
-// }
-
-// function getGreenLetters() {
-//   const usedRows = document.querySelector("game-app").shadowRoot
-//       .querySelectorAll("game-row[letters]:not([letters=''])");
-
-//   let result = [];
-//   // TODO: refactor to use a reduce method?
-//   usedRows.forEach(row => {
-//       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='correct']");
-//       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-//       result = [...result, ...letters];
-//   });
-  
-//   return [...new Set(result)];
-// }
-
-
 const getGameResults = async (tab) => {
   return chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: parseHtmlTileResults,
   })
   .then(data => data[0].result);
-
-  // const yellow = chrome.scripting.executeScript({
-  //     target: { tabId: tab.id },
-  //     function: getYellowLetters,
-  // })
-  // .then(data => { 
-  //   return { 
-  //     name : "yellow", 
-  //     values : data[0].result 
-  //   }}
-  // );
-
-  // const grey = chrome.scripting.executeScript({
-  //   target: { tabId: tab.id },
-  //   function: getGreyLetters,
-  // })
-  // .then(data => { 
-  //   return { 
-  //     name : "grey", 
-  //     values : data[0].result 
-  //   }}
-  // );
-
-  // const green = chrome.scripting.executeScript({
-  //   target: { tabId: tab.id },
-  //   function: getGreenLetters,
-  // })
-  // .then(data => { 
-  //   return { 
-  //     name : "green", 
-  //     values : data[0].result 
-  //   }}
-  // );
-
-  // return await Promise.all([all, yellow, grey, green]);
-  // return results;
 };
 
 // extension init
@@ -157,11 +90,13 @@ chrome.action.onClicked.addListener(tab => {
     //   document.body.style.backgroundColor = color;
     // });
 
-    // TODO: parse results from attempt
+    // run external script
     // const yellow = chrome.scripting.executeScript({
     //   target: { tabId: tab.id },
     //   files: ['results.js']
     // });
+
+    // TODO: parse results from previous attempts
     getGameResults(tab).then(results => {
       console.log(results);
     })
@@ -170,10 +105,7 @@ chrome.action.onClicked.addListener(tab => {
       console.error(error.message);
     })
 
-    // console.log(JSON.stringify(yellow));
-
-    // TODO: get dictionary hint
-
+    // TODO: get dictionary hint, logic from node module
     
     // Try hint
     // const args = "radio";
@@ -181,13 +113,6 @@ chrome.action.onClicked.addListener(tab => {
     //   target: { tabId: tab.id },
     //   function: typeWord,
     //   args: [args]
-    // });
-
-    
-
-    // chrome.scripting.executeScript({
-    //   target: { tabId: tab.id },
-    //   files: ['keyboard.js']
     // });
 
   }
