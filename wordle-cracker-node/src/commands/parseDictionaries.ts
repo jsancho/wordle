@@ -16,18 +16,18 @@ export const parseDictionaries = async () => {
     // TODO: apply multiline regex before splitting the file
     const words = data.split(/\r?\n/);
     const wordValidator = new RegExp(`^[a-z]{${WORD_LENGTH}}$`);
-    const wordleDictionary = words
+    const wordsValidated = words
       .filter((word) => wordValidator.test(word))
       .map((word) => word.toLowerCase());
 
-    console.log(`${words.length} words have been found`);
+    const uniqueWords = [...new Set(wordsValidated)];
+
+    console.log(`${words.length} words have been found.`);
     console.log(
-      `${wordleDictionary.length} with length of ${WORD_LENGTH} have been filtered`
+      `${uniqueWords.length} unique words with a length of ${WORD_LENGTH} have been filtered.`
     );
 
-    // TODO: remove duplicate words
-
-    const csv = wordleDictionary.join(',');
+    const csv = uniqueWords.join(',');
     const writeBuffer = Buffer.from(csv);
     await fs.writeFile(
       `${__dirname}/../dicts/${WORDLE_DICTIONARY}`,
