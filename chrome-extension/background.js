@@ -43,9 +43,14 @@ function parseHtmlTileResults() {
       }
   });
 
-  // TODO: remove duplicates from exclude
   // TODO: remove duplicates from yellow positions
-  return { hint: hint.join(''), yellow, exclude};
+  const result = {
+    hint: hint.join(''),
+    yellow,
+    exclude: [...new Set(exclude)]
+  }
+  
+  return result;
 }
 
 // function getYellowLetters() {
@@ -98,14 +103,23 @@ chrome.action.onClicked.addListener(tab => {
 
     // TODO: parse results from previous attempts
     getGameResults(tab).then(results => {
+      const { hint } = results;
+
       console.log(results);
+
+      if (!hint.includes('*')) {
+        console.log("game solved!");
+        return;
+      }
+
+      // TODO: get dictionary hint, logic from node module
+      
     })
     .catch(error => {
       debugger;
       console.error(error.message);
     })
-
-    // TODO: get dictionary hint, logic from node module
+    
     
     // Try hint
     // const args = "radio";
