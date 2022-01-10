@@ -53,23 +53,29 @@ function parseHtmlTileResults() {
   return result;
 }
 
-// function getYellowLetters() {
-//   // const allRows = document.querySelector("game-app").shadowRoot
-//   //     .querySelectorAll("game-row");
+const getSuggestions = async (results) => {
+  const parseDictionary = (dictionary) => {
 
-//   const usedRows = document.querySelector("game-app").shadowRoot
-//       .querySelectorAll("game-row[letters]:not([letters=''])");
+    debugger;
+  }
 
-//   let result = [];
-//   // TODO: refactor to use a reduce method?
-//   usedRows.forEach(row => {
-//       const presentTiles = row.shadowRoot.querySelectorAll("game-tile[evaluation='present']");
-//       const letters = Array.from(presentTiles).map(tile => tile.getAttribute("letter"));
-//       result = [...result, ...letters];
-//   });
-  
-//   return [...new Set(result)];
-// }
+  const requestDictionary = async () => {
+
+    try {
+    
+      const file = chrome.runtime.getURL('wordle.txt');
+      debugger;
+      const data = await fetch(file).then(response => response.text());
+      
+      console.log(data.split(',').length + ' words');
+    }
+    catch(error) {
+      console.log(error);
+    }
+  }
+
+  await requestDictionary();
+}
 
 const getGameResults = async (tab) => {
   return chrome.scripting.executeScript({
@@ -109,11 +115,19 @@ chrome.action.onClicked.addListener(tab => {
 
       if (!hint.includes('*')) {
         console.log("game solved!");
-        return;
+        // return;
       }
 
       // TODO: get dictionary hint, logic from node module
-      
+
+      // getSuggestions();
+
+      chrome.scripting.executeScript({
+          target: { tabId: tab.id },
+          function: getSuggestions,
+          args: [results]
+      });
+
     })
     .catch(error => {
       debugger;
