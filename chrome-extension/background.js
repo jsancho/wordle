@@ -20,8 +20,8 @@ function parseHtmlTileResults() {
   const usedRows = document.querySelector("game-app").shadowRoot
       .querySelectorAll("game-row[letters]:not([letters=''])");
 
-  const hint = Array.from('*'.repeat(5))
-  let yellow = {};
+  const hint = Array(5).fill('*');
+  const misses = Array(5).fill([]);
   const exclude = [];
   
   usedRows.forEach(row => {
@@ -35,46 +35,43 @@ function parseHtmlTileResults() {
         switch (evaluation) {
           case "correct": hint.splice(i, 1, letter);
                           break;
-          case "present": yellow[letter] = yellow[letter] && yellow[letter].length ? [...yellow[letter],i] :[i];
+          case "present": misses[i] = misses[i] && misses[i].length ? [...misses[i], letter] : [letter];
                          break;
-          case "absent": exclude.push(letter);
+          case "absent": if(!exclude.includes(letter)) exclude.push(letter);
                          break;
         }
       }
   });
 
-  // TODO: remove duplicates from yellow positions
+  const include = misses.reduce((previous, current) => {
+    return [...new Set([...previous, ...current])];
+  }, []);
+
   const result = {
     hint: hint.join(''),
-    yellow,
-    exclude: [...new Set(exclude)]
+    include: include.join(''),
+    exclude: exclude.join(''),
+    misses
   }
   
   return result;
 }
 
 const getSuggestions = async (results) => {
-  const parseDictionary = (dictionary) => {
-
-    debugger;
-  }
-
   const requestDictionary = async () => {
-
     try {
-    
       const file = chrome.runtime.getURL('wordle.txt');
-      debugger;
-      const data = await fetch(file).then(response => response.text());
-      
-      console.log(data.split(',').length + ' words');
+      return fetch(file).then(response => response.text());
     }
     catch(error) {
       console.log(error);
     }
   }
+  const dictionary = await requestDictionary();
+  console.log(dictionary.split(',').length + ' words in dictionary');
 
-  await requestDictionary();
+  // TODO: find matches for 'results'
+  debugger;
 }
 
 const getGameResults = async (tab) => {
@@ -119,8 +116,6 @@ chrome.action.onClicked.addListener(tab => {
       }
 
       // TODO: get dictionary hint, logic from node module
-
-      // getSuggestions();
 
       chrome.scripting.executeScript({
           target: { tabId: tab.id },
