@@ -1,5 +1,5 @@
 import { program } from 'commander';
-import { findMatch } from './commands/findMatch';
+import { suggestWords } from './commands/suggestWords';
 import { parseDictionaries } from './commands/parseDictionaries';
 
 program
@@ -19,7 +19,7 @@ program
   .description(
     'Suggest words that will match the letters in each position for the hint provided'
   )
-  .action(findMatch);
+  .action(suggestWords);
 
 program
   .command('parse-dicts')
