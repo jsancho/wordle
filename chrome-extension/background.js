@@ -78,36 +78,3 @@ const sendMessageToActiveTab = (action, onResponseReceived) => {
 // chrome.storage.sync.get("wordle", ({ color }) => {
 //   document.body.style.backgroundColor = color;
 // });
-
-/*getGameResults(tab).then(results => {
-      const { hint } = results;
-
-      if (!hint.includes('*')) {
-        console.log("game solved!");
-        // return;
-      }
-
-      // getMatchResults(tab).then(matches => {
-      //   debugger;
-      //   console.log("matched words");
-      //   console.log(matches);
-      // })
-
-    })
-    .catch(error => {
-      debugger;
-      console.error(error.message);
-    })*/
-
-// const here = await getGameResults(tab);
-
-// Try hint
-// const args = "radio";
-// chrome.scripting.executeScript({
-//   target: { tabId: tab.id },
-//   function: typeWord,
-//   args: [args]
-// });
-
-// }
-// });
