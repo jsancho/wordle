@@ -42,7 +42,7 @@ const parseHtmlTileResults = () => {
   };
 };
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === "parseHtml") {
     const results = parseHtmlTileResults();
     sendResponse(results);
