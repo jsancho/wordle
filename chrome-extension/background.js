@@ -1,21 +1,3 @@
-function typeWord(word) {
-  const clickKeyboardLetter = (letter) => {
-    document
-      .querySelector("game-app")
-      .shadowRoot.querySelector("game-keyboard")
-      .shadowRoot.querySelector(`button[data-key='${letter}']`)
-      .click();
-  };
-
-  const letters = word.split("");
-
-  letters.forEach((letter) => {
-    clickKeyboardLetter(letter);
-  });
-
-  // clickKeyboardLetter("↵");
-}
-
 // extension init
 chrome.runtime.onInstalled.addListener(() => {
   // irate, arose, adieu
@@ -50,6 +32,10 @@ const onGameResultsReceived = (gameResults) => {
 
 const onNextWordSuggested = (word) => {
   console.log("typing... " + word);
+
+  sendMessageToActiveTab({action: "typeWord", word});
+
+  // TODO: parse results again
 };
 
 const sendMessageToActiveTab = (action, onResponseReceived) => {
