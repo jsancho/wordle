@@ -1,32 +1,31 @@
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === "suggestWord") {
-    // TODO: response is failing to send
-    // The message port closed before a response was received.
+    getSuggestions(request.gameResults).then((suggestions) => {
+      // TODO: instead of returning first match, use an strategy,
+      // e.g.
+      // - word that will eliminate the most characters (count of more different characters)
+      // - word that will eliminate the most characters (word more "different" to every other word)
+      // - word with the most commonality (use a popularity ratio based on freedictionary.com, merriamwebster?)
+      const topSuggestion = suggestions[0];
 
-    // getSuggestions(request.gameResults).then((suggestions) => {
-    //   // TODO: instead of returning first match, use an strategy,
-    //   // e.g.
-    //   // - word that will eliminate the most characters (count of more different characters)
-    //   // - word that will eliminate the most characters (word more "different" to every other word)
-    //   // - word with the most commonality (use a popularity ratio based on freedictionary.com, merriamwebster?)
+      // The message port closed before a response was received.
+      sendResponse(topSuggestion);
+    });
 
-    //   sendResponse(suggestions[0]);
-    // });
-
-    sendResponse("abbey");
+    // sendResponse("abath");
   }
 });
 
 const getSuggestions = (gameResults) => {
-  const dictionary = requestDictionary();
-  const matches = matchResultsToDictionary(gameResults, dictionary);
-
-  return matches;
+  return requestDictionary().then((dictionary) => {
+    return matchResultsToDictionary(gameResults, dictionary);
+  });
 };
 
 const requestDictionary = () => {
   const file = chrome.runtime.getURL("wordle.txt");
-  fetch(file)
+
+  return fetch(file)
     .then((response) => response.text())
     .catch((error) => {
       console.log(error);

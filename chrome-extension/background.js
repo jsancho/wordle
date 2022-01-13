@@ -59,8 +59,10 @@ const onGameResultsReceived = (gameResults) => {
 };
 
 const onNextWordSuggested = (word) => {
-  // type word
   debugger;
+
+  // TODO: this callback is received before the getSuggestions promise is resolved
+  // type word
   console.log("typing... " + word);
 };
 
