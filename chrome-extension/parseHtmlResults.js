@@ -1,3 +1,10 @@
+chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
+  if (request.action === "parseHtml") {
+    const results = parseHtmlTileResults();
+    sendResponse(results);
+  }
+});
+
 const parseHtmlTileResults = () => {
   const usedRows = document
     .querySelector("game-app")
@@ -41,10 +48,3 @@ const parseHtmlTileResults = () => {
     misses,
   };
 };
-
-chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
-  if (request.action === "parseHtml") {
-    const results = parseHtmlTileResults();
-    sendResponse(results);
-  }
-});

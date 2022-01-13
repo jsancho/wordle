@@ -33,16 +33,6 @@ chrome.action.onClicked.addListener((tab) => {
   );
 });
 
-// chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-//   debugger;
-//   console.log(
-//     sender.tab
-//       ? "from a content script:" + sender.tab.url
-//       : "from the extension"
-//   );
-//   if (request.greeting === "hello") sendResponse({ farewell: "goodbye" });
-// });
-
 const onGameResultsReceived = (gameResults) => {
   const { hint } = gameResults;
   console.log(gameResults);
@@ -59,10 +49,6 @@ const onGameResultsReceived = (gameResults) => {
 };
 
 const onNextWordSuggested = (word) => {
-  debugger;
-
-  // TODO: this callback is received before the getSuggestions promise is resolved
-  // type word
   console.log("typing... " + word);
 };
 
