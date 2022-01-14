@@ -36,24 +36,26 @@ const requestDictionary = () => {
 
 const filterIncludedLetters = (dictionary, include) => {
   if (!include?.length) return dictionary;
-  let wordTokens = dictionary.split(",");
+  const wordTokens = dictionary.split(",");
 
-  // const chars = include.split("");
-  // TODO: remove duplicate letters
-  // chars.forEach((char) => {
-  //   wordTokens = wordTokens.filter((w) => w.includes(char));
-  // });
+  const filtered = wordTokens.reduce((previous, current) => {
+    let containsAllLetters = false;
+    include.forEach((c) => {
+      containsAllLetters = current.includes(c);
+      if (!containsAllLetters) return;
+    });
 
-  return wordTokens.join(",");
+    return containsAllLetters ? [...previous, current] : previous;
+  }, []);
+
+  return filtered.join(",");
 };
 
 const filterExcludedLetters = (dictionary, exclude) => {
   if (!exclude?.length) return dictionary;
   let wordTokens = dictionary.split(",");
 
-  const chars = exclude.split("");
-  // TODO: remove duplicate letters
-  chars.forEach((char) => {
+  exclude.forEach((char) => {
     wordTokens = wordTokens.filter((w) => !w.includes(char));
   });
 
@@ -61,10 +63,10 @@ const filterExcludedLetters = (dictionary, exclude) => {
 };
 
 const matchResultsToDictionary = (results, dictionary) => {
-  // let workingDictionary = filterIncludedLetters(dictionary, results.include);
   const { hint, include, exclude, misses } = results;
 
-  workingDictionary = filterExcludedLetters(dictionary, exclude);
+  let workingDictionary = filterIncludedLetters(dictionary, include);
+  workingDictionary = filterExcludedLetters(workingDictionary, exclude);
 
   const characterMatcher = hint
     .map((c, i) => {

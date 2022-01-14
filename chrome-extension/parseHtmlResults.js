@@ -50,8 +50,8 @@ const parseHtmlTileResults = () => {
 
   return {
     hint,
-    include: include.join(""),
-    exclude: exclude.join(""),
+    include,
+    exclude,
     misses,
   };
 };
