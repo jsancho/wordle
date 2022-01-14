@@ -48,8 +48,6 @@ const parseHtmlTileResults = () => {
       : [...new Set([...previous, ...current])];
   }, []);
 
-  // TODO: remove from exclude any letters in yellow/missed positions
-
   return {
     hint: hint.join(""),
     include: include.join(""),
