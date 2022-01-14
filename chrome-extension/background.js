@@ -31,11 +31,11 @@ const onGameResultsReceived = (gameResults) => {
 };
 
 const onNextWordSuggested = (word) => {
-  console.log("typing... " + word);
+  console.log("typing guess... " + word);
 
-  sendMessageToActiveTab({action: "typeWord", word});
+  sendMessageToActiveTab({ action: "typeWord", word });
 
-  // TODO: parse results again
+  // sendMessageToActiveTab({ action: "parseHtml", onGameResultsReceived });
 };
 
 const sendMessageToActiveTab = (action, onResponseReceived) => {

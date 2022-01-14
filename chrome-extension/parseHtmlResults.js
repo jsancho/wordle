@@ -12,7 +12,7 @@ const parseHtmlTileResults = () => {
 
   const hint = Array(5).fill("*");
   const misses = Array(5).fill([]);
-  const exclude = [];
+  const absent = [];
 
   usedRows.forEach((row) => {
     const t = row.shadowRoot.querySelectorAll("game-tile");
@@ -31,15 +31,27 @@ const parseHtmlTileResults = () => {
             misses[i] && misses[i].length ? [...misses[i], letter] : [letter];
           break;
         case "absent":
-          if (!exclude.includes(letter)) exclude.push(letter);
+          if (!absent.includes(letter)) absent.push(letter);
           break;
       }
     }
   });
 
-  const include = misses.reduce((previous, current) => {
-    return [...new Set([...previous, ...current])];
+  const include = misses.reduce(
+    (previous, current) => {
+      return [...new Set([...previous, ...current])];
+    },
+    [hint.split()]
+  );
+
+  const exclude = absent.reduce((previous, current) => {
+    // do not exclude grey letters that have been found as valid in other positions
+    return include.includes(current)
+      ? previous
+      : [...new Set([...previous, ...current])];
   }, []);
+
+  // TODO: remove from exclude any letters in yellow/missed positions
 
   return {
     hint: hint.join(""),
