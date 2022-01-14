@@ -37,16 +37,13 @@ const parseHtmlTileResults = () => {
     }
   });
 
-  const include = misses.reduce(
-    (previous, current) => {
-      return [...new Set([...previous, ...current])];
-    },
-    [hint.split()]
-  );
+  const include = misses.reduce((previous, current) => {
+    return [...new Set([...previous, ...current])];
+  }, []);
 
   const exclude = absent.reduce((previous, current) => {
     // do not exclude grey letters that have been found as valid in other positions
-    return include.includes(current)
+    return hint.includes(current) || include.includes(current)
       ? previous
       : [...new Set([...previous, ...current])];
   }, []);
