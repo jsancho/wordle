@@ -40,11 +40,6 @@ const filterIncludedLetters = (dictionary, include) => {
 
   const filtered = wordTokens.reduce((previous, current) => {
     const containsAllLetters = include.every((c) => current.includes(c));
-    // include.forEach((c) => {
-    //   containsAllLetters = current.includes(c);
-    //   if (!containsAllLetters) break;
-    // });
-
     return containsAllLetters ? [...previous, current] : previous;
   }, []);
 
