@@ -39,11 +39,11 @@ const filterIncludedLetters = (dictionary, include) => {
   const wordTokens = dictionary.split(",");
 
   const filtered = wordTokens.reduce((previous, current) => {
-    let containsAllLetters = false;
-    include.forEach((c) => {
-      containsAllLetters = current.includes(c);
-      if (!containsAllLetters) return;
-    });
+    const containsAllLetters = include.every((c) => current.includes(c));
+    // include.forEach((c) => {
+    //   containsAllLetters = current.includes(c);
+    //   if (!containsAllLetters) break;
+    // });
 
     return containsAllLetters ? [...previous, current] : previous;
   }, []);
