@@ -38,11 +38,11 @@ const filterIncludedLetters = (dictionary, include) => {
   if (!include?.length) return dictionary;
   let wordTokens = dictionary.split(",");
 
-  const chars = include.split("");
+  // const chars = include.split("");
   // TODO: remove duplicate letters
-  chars.forEach((char) => {
-    wordTokens = wordTokens.filter((w) => w.includes(char));
-  });
+  // chars.forEach((char) => {
+  //   wordTokens = wordTokens.filter((w) => w.includes(char));
+  // });
 
   return wordTokens.join(",");
 };
@@ -61,11 +61,20 @@ const filterExcludedLetters = (dictionary, exclude) => {
 };
 
 const matchResultsToDictionary = (results, dictionary) => {
-  let workingDictionary = filterIncludedLetters(dictionary, results.include);
-  workingDictionary = filterExcludedLetters(dictionary, results.exclude);
+  // let workingDictionary = filterIncludedLetters(dictionary, results.include);
+  const { hint, include, exclude, misses } = results;
 
-  const hintMatcher = results.hint.replace(/\*/g, "[a-z]");
-  const wordMatcherExpression = `(${hintMatcher}),`;
+  workingDictionary = filterExcludedLetters(dictionary, exclude);
+
+  const characterMatcher = hint
+    .map((c, i) => {
+      if (c !== "*") return c;
+
+      return misses[i].length ? `[^${misses[i].join("")}]` : "[a-z]";
+    })
+    .join("");
+
+  const wordMatcherExpression = `(${characterMatcher}),`;
   const wordMatcher = new RegExp(wordMatcherExpression, "g");
   const result = [...workingDictionary.matchAll(wordMatcher)];
 

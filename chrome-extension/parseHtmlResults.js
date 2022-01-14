@@ -49,7 +49,7 @@ const parseHtmlTileResults = () => {
   }, []);
 
   return {
-    hint: hint.join(""),
+    hint,
     include: include.join(""),
     exclude: exclude.join(""),
     misses,
