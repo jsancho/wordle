@@ -1,13 +1,15 @@
 // global variable, so that we can load the dictionary at script injection
-let dictionary = "";
+let dictionary = [];
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === "suggestWord") {
     const suggestions = getSuggestions(request.gameResults, dictionary);
 
+    console.log(`${suggestions.length} suggestions found...`);
+    console.log(JSON.stringify(suggestions));
+
     // TODO: instead of returning first match, use an strategy,
     // e.g.
-    // - word that will eliminate the most characters (count of more different characters)
     // - word that will eliminate the most characters (word more "different" to every other word)
     // - word with the most commonality (use a popularity ratio based on freedictionary.com, merriamwebster?)
     const topSuggestion = suggestions[0];
@@ -21,25 +23,22 @@ chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
 
 const filterIncludedLetters = (dictionary, include) => {
   if (!include?.length) return dictionary;
-  const wordTokens = dictionary.split(",");
 
-  const filtered = wordTokens.reduce((previous, current) => {
+  return dictionary.reduce((previous, current) => {
     const containsAllLetters = include.every((c) => current.includes(c));
     return containsAllLetters ? [...previous, current] : previous;
   }, []);
-
-  return filtered.join(",");
 };
 
 const filterExcludedLetters = (dictionary, exclude) => {
   if (!exclude?.length) return dictionary;
-  let wordTokens = dictionary.split(",");
+  let words = [...dictionary];
 
   exclude.forEach((char) => {
-    wordTokens = wordTokens.filter((w) => !w.includes(char));
+    words = words.filter((w) => !w.includes(char));
   });
 
-  return wordTokens.join(",");
+  return words;
 };
 
 const getSuggestions = (results, dictionary) => {
@@ -58,7 +57,9 @@ const getSuggestions = (results, dictionary) => {
 
   const wordMatcherExpression = `(${characterMatcher}),`;
   const wordMatcher = new RegExp(wordMatcherExpression, "g");
-  const result = [...workingDictionary.matchAll(wordMatcher)];
+
+  const dictionaryString = workingDictionary.join(",") + ",";
+  const result = [...dictionaryString.matchAll(wordMatcher)];
 
   return result.map((r) => r[1]);
 };
@@ -69,7 +70,7 @@ const requestDictionary = () => {
   fetch(file)
     .then((response) => response.text())
     .then((text) => {
-      dictionary = text;
+      dictionary = JSON.parse(text);
     })
     .catch((error) => {
       console.log(error);

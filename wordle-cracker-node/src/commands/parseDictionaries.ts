@@ -1,5 +1,6 @@
 import { promises as fs } from 'fs';
 import { Buffer } from 'buffer';
+import { uniq, orderBy } from 'lodash';
 
 const DEFAULT_DICTIONARY = 'SCRABBLE-munged-large.txt';
 const WORDLE_DICTIONARY = 'wordle.txt';
@@ -41,12 +42,20 @@ export const parseDictionaries = async () => {
 
 export const saveDictionary = async (words: string[]) => {
   const dictionary = words.map((word) => {
+    const uniqueness = uniq(word.split('')).length;
     return {
       word,
-      uniqueness: word.length,
+      uniqueness,
     } as IWord;
   });
-  const json = JSON.stringify(dictionary);
+
+  const sortedDictionary: IWord[] = orderBy(
+    dictionary,
+    ['uniqueness', 'word'],
+    ['desc', 'asc']
+  );
+
+  const json = JSON.stringify(sortedDictionary.map((w) => w.word));
   const writeBuffer = Buffer.from(json);
   await fs.writeFile(`${__dirname}/../dicts/${WORDLE_DICTIONARY}`, writeBuffer);
 };
