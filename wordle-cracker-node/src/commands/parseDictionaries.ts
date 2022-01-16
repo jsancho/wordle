@@ -5,6 +5,11 @@ const DEFAULT_DICTIONARY = 'SCRABBLE-munged-large.txt';
 const WORDLE_DICTIONARY = 'wordle.txt';
 const WORD_LENGTH = 5;
 
+export interface IWord {
+  word: string;
+  uniqueness: number;
+}
+
 export const parseDictionaries = async () => {
   try {
     // TODO: Parse all available files in "dicts" as a single collection
@@ -22,19 +27,26 @@ export const parseDictionaries = async () => {
 
     const uniqueWords = [...new Set(wordsValidated)];
 
+    await saveDictionary(uniqueWords);
+
     console.log(`${words.length} words have been found.`);
     console.log(
       `${uniqueWords.length} unique words with a length of ${WORD_LENGTH} have been filtered.`
-    );
-
-    const csv = uniqueWords.join(',');
-    const writeBuffer = Buffer.from(csv);
-    await fs.writeFile(
-      `${__dirname}/../dicts/${WORDLE_DICTIONARY}`,
-      writeBuffer
     );
   } catch (error) {
     console.log('unable to process dictionary files');
     console.log(error);
   }
+};
+
+export const saveDictionary = async (words: string[]) => {
+  const dictionary = words.map((word) => {
+    return {
+      word,
+      uniqueness: word.length,
+    } as IWord;
+  });
+  const json = JSON.stringify(dictionary);
+  const writeBuffer = Buffer.from(json);
+  await fs.writeFile(`${__dirname}/../dicts/${WORDLE_DICTIONARY}`, writeBuffer);
 };

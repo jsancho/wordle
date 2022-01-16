@@ -7,13 +7,13 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Launch",
             "skipFiles": [
                 "<node_internals>/**"
             ],
             "program": "${workspaceFolder}\\dist\\app.js",
             //"args": ["suggest", "****l", "-i", "a", "-e", "irtefouc"],
-            // "args": ["parse-dicts"],
+            "args": ["parse-dicts"],
             "preLaunchTask": "npm: build",
             "outFiles": [
                 "${workspaceFolder}/dist/**/*.js"
