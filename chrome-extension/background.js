@@ -1,7 +1,7 @@
 // extension init
 chrome.runtime.onInstalled.addListener(() => {
-  // irate, arose, adieu
-  const initialWord = "irate";
+  // irate, arose, adieu, stare
+  const initialWord = "stare";
   chrome.storage.sync.set({ initialWord });
   console.log(`Wordle cracker initialised with ${initialWord}`);
 });

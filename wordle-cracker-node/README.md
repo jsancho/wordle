@@ -1,4 +1,4 @@
-# Wordle Cracker
+# Wordle Cracker for Node
 
 https://www.powerlanguage.co.uk/wordle/
 
