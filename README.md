@@ -1,7 +1,7 @@
 # WORDLE CRACKER
 
 The main project is a Google Chrome extension that guesses the next best word to use on every click.
-![](https://github.com/jsancho/wordle/blob/main/media/game_solved_tangy.gif)
+![](https://github.com/jsancho/wordle-cracker/blob/main/media/game_solved_tangy.gif)
 
 ## Install the extension
 
