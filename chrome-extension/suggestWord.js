@@ -1,25 +1,62 @@
-// global variable, so that we can load the dictionary at script injection
+// global variable, so that we can load the dictionary during script injection
 let dictionary = [];
 
 chrome.runtime.onMessage.addListener((request, _sender, sendResponse) => {
   if (request.action === "suggestWord") {
-    const suggestions = getSuggestions(request.gameResults, dictionary);
+    const { gameResults } = request;
+    const suggestions = getSuggestions(gameResults, dictionary);
 
     console.log(`${suggestions.length} suggestions found...`);
     console.log(JSON.stringify(suggestions));
 
-    // TODO: instead of returning first match, use an strategy,
-    // e.g.
-    // - word that will eliminate the most characters (word more "different" to every other word)
-    // - word with the most commonality (use a popularity ratio based on freedictionary.com, merriamwebster?)
-    const topSuggestion = suggestions[0];
-    sendResponse(topSuggestion);
+    const topScoreSuggestion = getTopScore(suggestions, gameResults);
+
+    sendResponse(topScoreSuggestion);
 
     // return true from the event listener to indicate you wish to send a response asynchronously
     // (this will keep the message channel open to the other end until sendResponse is called).
     return true;
   }
 });
+
+const getTopScore = (suggestions, gameResults) => {
+  // match the letters that we can still use and that have not been found yet (in yellows nor greens)
+  const validLettersExpression = `([^${gameResults.include.join("")}])`;
+  const validLettersMatcher = new RegExp(validLettersExpression, "g");
+
+  // we calculate the score of every letter that can be potentially used.
+  // every appearence of a letter in a word will increase its score by one
+  const scoredLetters = {};
+  suggestions.forEach((word) => {
+    const lettersToScore = word.match(validLettersMatcher);
+
+    lettersToScore.forEach((letter) => {
+      scoredLetters[letter] = scoredLetters[letter]
+        ? scoredLetters[letter] + 1
+        : 1;
+    });
+  });
+
+  const scoredWords = suggestions.map((word) => {
+    const letters = word.split("");
+
+    // get the score of every letter and add it up
+    const score = letters.reduce((previous, current) => {
+      return previous + (scoredLetters[current] || 0);
+    }, 0);
+
+    return {
+      word,
+      score,
+    };
+  });
+
+  const sortedWords = [...scoredWords].sort((a, b) => {
+    return b.score - a.score;
+  });
+
+  return sortedWords[0].word;
+};
 
 const filterIncludedLetters = (dictionary, include) => {
   if (!include?.length) return dictionary;
