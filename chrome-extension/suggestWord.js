@@ -28,7 +28,7 @@ const getTopScore = (suggestions, gameResults) => {
   // every appearence of a letter in a word will increase its score by one
   const scoredLetters = {};
   suggestions.forEach((word) => {
-    const lettersToScore = word.match(validLettersMatcher);
+    const lettersToScore = word.match(validLettersMatcher) || [];
 
     lettersToScore.forEach((letter) => {
       scoredLetters[letter] = scoredLetters[letter]
