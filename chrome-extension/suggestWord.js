@@ -55,6 +55,10 @@ const getTopScore = (suggestions, gameResults) => {
     return b.score - a.score;
   });
 
+  // lowest score
+  //return sortedWords[sortedWords.length - 1].word;
+
+  //highest score
   return sortedWords[0].word;
 };
 

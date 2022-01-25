@@ -12,6 +12,7 @@ const parseHtmlTileResults = () => {
 
   const hint = Array(5).fill("*");
   const misses = Array(5).fill([]);
+  const include = [];
   const absent = [];
 
   usedRows.forEach((row) => {
@@ -29,17 +30,22 @@ const parseHtmlTileResults = () => {
         case "present":
           misses[i] =
             misses[i] && misses[i].length ? [...misses[i], letter] : [letter];
+          if (!include.includes(letter)) {
+            include.push(letter);
+          }
           break;
         case "absent":
-          if (!absent.includes(letter)) absent.push(letter);
+          if (!absent.includes(letter)) {
+            absent.push(letter);
+          }
+
+          misses[i] =
+            misses[i] && misses[i].length ? [...misses[i], letter] : [letter];
+
           break;
       }
     }
   });
-
-  const include = misses.reduce((previous, current) => {
-    return [...new Set([...previous, ...current])];
-  }, []);
 
   const exclude = absent.reduce((previous, current) => {
     // do not exclude grey letters that have been found as valid in other positions
